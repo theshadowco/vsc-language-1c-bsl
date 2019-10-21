@@ -312,7 +312,7 @@
     "fast-xml-parser": "3.12.17",
     "filequeue": "^0.5.0",
     "fs-extra": "^8.1.0",
-    "glob": "^7.1.4",
+    "glob": "^7.1.5",
     "iconv-lite": "^0.5.0",
     "lokijs": "^1.5.7",
     "onec-syntaxparser": "0.1.11",
