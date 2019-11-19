@@ -317,7 +317,7 @@
     "lokijs": "^1.5.7",
     "onec-syntaxparser": "0.1.11",
     "vscode-languageclient": "^5.2.1",
-    "which": "^1.3.1",
+    "which": "^2.0.2",
     "xml2js": "^0.4.19"
   }
 }
