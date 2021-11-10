@@ -85,9 +85,9 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     const configuration = vscode.workspace.getConfiguration(LANGUAGE_1C_BSL_CONFIG);
-    const languageServerEnabled = Boolean(configuration.get("languageServerEnabled"));
+    global.languageServerEnabled = Boolean(configuration.get("languageServerEnabled"))
 
-    if (!languageServerEnabled) {
+    if (!global.languageServerEnabled) {
         context.subscriptions.push(
             vscode.languages.registerDocumentFormattingEditProvider(
                 BSL_MODE,
@@ -776,6 +776,13 @@ export function activate(context: vscode.ExtensionContext) {
         syntaxPanel.reveal(vscode.ViewColumn.Two);
     }
 
+}
+
+export function deactivate(): Thenable<void> | undefined {
+	if (!languageClientProvider) {
+		return undefined;
+	}
+	return languageClientProvider.stop();
 }
 
 export async function waitForBSLLSActivation() {
