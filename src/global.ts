@@ -50,6 +50,10 @@ export class Global {
     public oscriptCacheUpdated: boolean;
     public bslCacheUpdated: boolean;
     public contentData: object = {};
+    /**
+     * Признак использования language server (из настроек плагина)
+     */
+    public languageServerEnabled: boolean
 
     constructor(adapter?: any) {
         if (adapter) {
