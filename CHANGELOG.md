@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.27.0
+
+* Обновление language-client до версии 8.1.0
+* Поддержка клиентских команд запуска тестов от BSL Language Server
+
 ## 1.26.0
 
 * Обновление language-client до версии 8.0.0-next14
