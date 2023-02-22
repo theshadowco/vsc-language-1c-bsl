@@ -16,6 +16,8 @@ import { ServerDownloader } from "../util/serverDownloader";
 import { IStatus } from "../util/status";
 
 const RESTART_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.restart`;
+const RUN_ALL_TESTS_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runAllTests`;
+const RUN_TEST_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runTest`;
 
 export default class LanguageClientProvider {
     private bslLsReady = false;
@@ -113,6 +115,18 @@ export default class LanguageClientProvider {
         this.languageClient = await this.createLanguageClient(context, binaryName);
         this.languageClient.start();
 
+        let terminal = vscode.window.terminals.find(terminal => terminal.name === "BSL Language Server tests");
+        if (terminal === undefined) {
+            terminal = vscode.window.createTerminal({
+                name: "BSL Language Server tests",
+                hideFromUser: true
+            });
+        } 
+
+        type RunTestArgs = {
+            text: string;
+        }
+
         context.subscriptions.push(
             vscode.commands.registerCommand(RESTART_COMMAND, async () => {
                 this.bslLsReady = false;
@@ -122,6 +136,14 @@ export default class LanguageClientProvider {
 
                 await this.languageClient.onReady();
                 this.bslLsReady = true;
+            }),
+            vscode.commands.registerCommand(RUN_ALL_TESTS_COMMAND, async (args: RunTestArgs) => {
+                terminal.show();    
+                terminal.sendText(args.text);
+            }),
+            vscode.commands.registerCommand(RUN_TEST_COMMAND, async (args: RunTestArgs) => {
+                terminal.show();
+                terminal.sendText(args.text);
             })
         );
 

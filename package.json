@@ -112,6 +112,18 @@
         "command": "language-1c-bsl.languageServer.restart",
         "title": "Restart the BSL Language Server",
         "category": "Language 1C (BSL)"
+      },
+      {
+        "command": "language-1c-bsl.languageServer.runTest",
+        "title": "Run test",
+        "category": "Language 1C (BSL)",
+        "enablement": "false"        
+      },
+      {
+        "command": "language-1c-bsl.languageServer.runAllTests",
+        "title": "Run test",
+        "category": "Language 1C (BSL)",
+        "enablement": "false"        
       }
     ],
     "menus": {
@@ -401,7 +413,7 @@
     "request-progress": "^3.0.0",
     "request-promise-native": "^1.0.9",
     "semver": "^7.3.6",
-    "vscode-languageclient": "^8.0.0-next.14",
+    "vscode-languageclient": "^8.1.0",
     "which": "^2.0.2",
     "xml2js": "^0.4.23"
   },
