@@ -134,7 +134,7 @@ export default class LanguageClientProvider {
 
                 this.languageClient.start();
 
-                await this.languageClient.onReady();
+                // await this.languageClient.onReady();
                 this.bslLsReady = true;
             }),
             vscode.commands.registerCommand(RUN_ALL_TESTS_COMMAND, async (args: RunTestArgs) => {
@@ -147,7 +147,7 @@ export default class LanguageClientProvider {
             })
         );
 
-        await this.languageClient.onReady();
+        // await this.languageClient.onReady();
         this.bslLsReady = true;
     }
 
