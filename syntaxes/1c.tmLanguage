@@ -238,6 +238,12 @@
       </dict>
       <dict>
         <key>name</key>
+        <string>keyword.control.native.bsl</string>
+        <key>match</key>
+        <string>(?i)#native</string>
+      </dict>
+      <dict>
+        <key>name</key>
         <string>keyword.control.bsl</string>
         <key>match</key>
         <string>(?i:(?&lt;=[^\wа-яё\.]|^)(Прервать|Break|Продолжить|Continue|Возврат|Return)(?=[^\wа-яё\.]|$))</string>
