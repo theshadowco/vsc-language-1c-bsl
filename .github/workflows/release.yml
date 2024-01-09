@@ -18,12 +18,14 @@ jobs:
         id: publishToOpenVSX
         with:
           pat: ${{ secrets.OVSX_TOKEN }}
+          skipDuplicate: true
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VSCE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ steps.publishToOpenVSX.outputs.vsixPath }}
+          skipDuplicate: true
       - name: Upload vsix to release
         uses: AButler/upload-release-assets@v1.0
         with:
