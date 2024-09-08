@@ -26,7 +26,8 @@
   },
   "main": "./out/src/extension",
   "scripts": {
-    "test": "cross-env CODE_TESTS_WORKSPACE=test/fixtures node ./node_modules/vscode/bin/test",
+    "test": "vscode-test",
+    "watch": "tsc -watch -p ./",
     "vscode:prepublish": "tsc -p ./",
     "lint": "tslint --project tsconfig.json 'src/**/*.ts' -t verbose",
     "compile": "tsc -watch -p ./",
@@ -117,13 +118,13 @@
         "command": "language-1c-bsl.languageServer.runTest",
         "title": "Run test",
         "category": "Language 1C (BSL)",
-        "enablement": "false"        
+        "enablement": "false"
       },
       {
         "command": "language-1c-bsl.languageServer.runAllTests",
         "title": "Run test",
         "category": "Language 1C (BSL)",
-        "enablement": "false"        
+        "enablement": "false"
       }
     ],
     "menus": {
@@ -375,6 +376,7 @@
     }
   },
   "devDependencies": {
+    "@snyk/protect": "^1.896.0",
     "@types/extract-zip": "^1.6.2",
     "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.2.0",
@@ -385,13 +387,14 @@
     "@types/semver": "^7.3.4",
     "@types/vscode": "^1.66.0",
     "@types/which": "^1.3.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
     "cross-env": "^7.0.3",
     "decache": "^4.6.1",
     "istanbul": "^0.4.5",
     "mocha": "^10.2.0",
     "remap-istanbul": "^0.13.0",
     "should": "^13.2.3",
-    "@snyk/protect": "^1.896.0",
     "tslint": "^6.1.3",
     "typescript": "^4.6.3",
     "vsce": "^2.7.0"
@@ -412,6 +415,7 @@
     "request-progress": "^3.0.0",
     "request-promise-native": "^1.0.9",
     "semver": "^7.5.2",
+    "source-map-support": "^0.5.21",
     "vscode-languageclient": "^8.1.0",
     "which": "^2.0.2",
     "xml2js": "^0.5.0"
