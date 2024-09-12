@@ -136,7 +136,9 @@ describe("Completion", function() {
         });
     });
 
-    it("should show global enums", async () => {
+
+    // TODO Unskip when https://github.com/1c-syntax/vsc-language-1c-bsl/issues/288 is done
+    it.skip("should show global enums", async () => {
         await addText("КодировкаТ");
 
         const completionList = await getCompletionListFromCurrentPosition();
