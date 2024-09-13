@@ -1263,7 +1263,7 @@ export class Global {
 
             const modules = [];
             const classes = [];
-            if (packageDef.hasOwnProperty("module")) {
+            if (Object.hasOwnProperty.bind(packageDef)("module")) {
                 if (packageDef.module instanceof Array) {
                     for (const module of packageDef.module) {
                         modules.push(module);
@@ -1272,7 +1272,7 @@ export class Global {
                     modules.push(packageDef.module);
                 }
             }
-            if (packageDef.hasOwnProperty("class")) {
+            if (Object.hasOwnProperty.bind(packageDef)("class")) {
                 if (packageDef.class instanceof Array) {
                     for (const clazz of packageDef.class) {
                         classes.push(clazz);
