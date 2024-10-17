@@ -311,6 +311,38 @@
         <key>match</key>
         <string>(?i)#(КонецОбласти|EndRegion)</string>
       </dict>
+      <dict>
+        <key>comment</key>
+        <string>Delete start</string>
+        <key>name</key>
+        <string>keyword.other.section.bsl</string>
+        <key>match</key>
+        <string>(?i)#(Удаление|Delete)</string>
+      </dict>
+      <dict>
+        <key>comment</key>
+        <string>Delete end</string>
+        <key>name</key>
+        <string>keyword.other.section.bsl</string>
+        <key>match</key>
+        <string>(?i)#(КонецУдаления|EndDelete)</string>
+      </dict>
+      <dict>
+        <key>comment</key>
+        <string>Inster start</string>
+        <key>name</key>
+        <string>keyword.other.section.bsl</string>
+        <key>match</key>
+        <string>(?i)#(Вставка|Insert)</string>
+      </dict>
+      <dict>
+        <key>comment</key>
+        <string>Insert end</string>
+        <key>name</key>
+        <string>keyword.other.section.bsl</string>
+        <key>match</key>
+        <string>(?i)#(КонецВставки|EndInsert)</string>
+      </dict>
     </array>
     <key>repository</key>
     <dict>
