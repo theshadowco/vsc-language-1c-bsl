@@ -9,7 +9,7 @@ import SyntaxContentOscript from "./SyntaxContentOscript";
 import SyntaxContentOscriptLibrary from "./SyntaxContentOscriptLibrary";
 import SyntaxExternalHelper from "./SyntaxExternalHelper";
 
-import * as fastXmlParser from "fast-xml-parser";
+import { XMLParser } from "fast-xml-parser";
 
 export default class SyntaxHelperProvider extends AbstractProvider {
     private syntaxContent: AbstractSyntaxContent;
@@ -38,7 +38,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
         "Tasks"
     ];
 
-    public updateContentPanel(panel: vscode.WebviewPanel, updateContent: boolean) {   
+    public updateContentPanel(panel: vscode.WebviewPanel, updateContent: boolean) {
         this.webPanel = panel;
         var result = this.provideTextDocumentContent(updateContent);
         result.then(
@@ -243,7 +243,8 @@ export default class SyntaxHelperProvider extends AbstractProvider {
             const data = this._global.readFileSync(files[i].toString(), substrIndex);
             let result;
             try {
-                result = fastXmlParser.parse(data);
+                const xmlPaser = new XMLParser();
+                result = xmlPaser.parse(data);
             } catch (err) {
                 if (err) {
                     console.log(err);
@@ -280,7 +281,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
         if (
             this._global.syntaxFilled === "" ||
             this._global.syntaxFilled !== this.syntax ||
-            updateContent 
+            updateContent
         ) {
             this._global.syntaxFilled = this.syntax;
             this.oscriptMethods = this.syntaxContent.getSyntaxContentItems(
@@ -329,7 +330,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
     }
 
     private async getHTML(fillStructure): Promise<string> {
-        
+
         let hljs = this.webPanel.webview.asWebviewUri(this.getUriForAsset('highlight.pack.js'));
         let mdit = this.webPanel.webview.asWebviewUri(this.getUriForAsset('markdown-it.js'));
         let shjs = this.webPanel.webview.asWebviewUri(this.getUriForAsset('syntaxhelper.js'));
