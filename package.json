@@ -3,7 +3,7 @@
   "displayName": "Language 1C (BSL)",
   "description": "Syntax highlighting for 1C:Enterprise 8.",
   "icon": "images/1c-syntax.png",
-  "version": "1.27.3",
+  "version": "1.28.0",
   "publisher": "1c-syntax",
   "galleryBanner": {
     "color": "#0000FF",
@@ -285,8 +285,6 @@
       },
       {
         "command": "language-1c-bsl.expandAbbreviation",
-        "key": "tab",
-        "mac": "tab",
         "when": "editorTextFocus && editorLangId == 'bsl'"
       },
       {
@@ -325,12 +323,12 @@
       {
         "language": "bsl",
         "scopeName": "source.bsl",
-        "path": "./syntaxes/1c.tmLanguage"
+        "path": "./syntaxes/1c.tmLanguage.json"
       },
       {
         "language": "sdbl",
         "scopeName": "source.sdbl",
-        "path": "./syntaxes/1c-query.tmLanguage"
+        "path": "./syntaxes/1c-query.tmLanguage.json"
       }
     ],
     "problemMatchers": [
