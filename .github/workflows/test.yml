@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Who to greet'
+        required: true
+        default: 'World'
 
 jobs:
   build:
