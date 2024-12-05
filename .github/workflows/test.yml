@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - feature/gh-workflow
+  pull_request:
 
 jobs:
   build:
