@@ -23,10 +23,8 @@ jobs:
       uses: otymko/setup-onescript@v1.4
       with:
         version: '1.9.2'
-   - name: Install oscript-config
-     run: opm install oscript-config
-
-        
+    - name: Install oscript-config
+      run: opm install oscript-config       
     - run: npm install
     - run: xvfb-run -a npm test
       if: runner.os == 'Linux'
