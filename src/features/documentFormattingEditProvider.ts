@@ -106,9 +106,7 @@ export default class DocumentFormattingEditProvider extends AbstractProvider
             range = new vscode.Range(startPosition, endPosition);
             value = documentText.substring(rangeOffset, endOffset);
             initialIndentLevel = this.computeIndentLevel(value, options);
-            if (true) {
-                value = wizard(value);
-            }
+            value = wizard(value);
         } else {
             value = documentText;
             range = new vscode.Range(new vscode.Position(0, 0), document.positionAt(value.length));
@@ -140,7 +138,7 @@ export default class DocumentFormattingEditProvider extends AbstractProvider
                 "(?:[^wа-яё.]|^)(Процедура|Функция|КонецПроцедуры|КонецФункции|Если|Иначе" +
                 "|ИначеЕсли|КонецЕсли|Тогда|Для|Каждого|Пока|Цикл|КонецЦикла|Попытка|Исключение|КонецПопытки" +
                 "|Экспорт|Возврат|Истина|Ложь|Сообщить|Новый|СообщениеПользователю|Неопределено)(?=[^wа-яё.]|$)";
-            const Regex = /(\/\/.*$)|(\/\/.*\r?\n)|("[^"]*$)|("(""|[^"]*)*")|((\/[^\/"]|[^\/"])+)/g;
+            const Regex = /(\/\/.*$)|(\/\/.*\r?\n)|("[^"]*$)|("(""|[^"]*)*")|((\/[^/"]|[^/"])+)/g;
             const separator = /(^|.)(<>|<=|>=|,|=|\+|-|\*|\/|%|<|>)(.|$)/g;
             let ArrStrings = Regex.exec(formattingValue);
             while (ArrStrings) {
@@ -214,7 +212,7 @@ export default class DocumentFormattingEditProvider extends AbstractProvider
                 const firstWord = element
                     .toLowerCase()
                     .trim()
-                    .split(/[^\wа-яё\(\)]/)[0];
+                    .split(/[^\wа-яё()]/)[0];
                 if (
                     +key !== 0 &&
                     indentLevel !== 0 &&

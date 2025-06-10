@@ -22,7 +22,7 @@ export default class GlobalCompletionItemProvider extends AbstractProvider
                 if (char === "." && position.character > 1) {
                     bucket = this.getDotComplection(document, position);
                     return resolve(bucket);
-                } else if (!char.match(/[/\()"':,.;<>~!@#$%^&*|+=\[\]{}`?\…-\s\n\t]/)) {
+                } else if (!char.match(/[/()"':,.;<>~!@#$%^&*|+=[\]{}`?…-\s\n\t]/)) {
                     let word = document.getText(
                         new vscode.Range(document.getWordRangeAtPosition(position).start, position)
                     );
@@ -86,7 +86,7 @@ export default class GlobalCompletionItemProvider extends AbstractProvider
                                         position
                                     )
                                 )
-                                .match(/(^|[\(;=,\s])(новый|new)\s+[\wа-яё]+$/i)
+                                .match(/(^|[(;=,\s])(новый|new)\s+[\wа-яё]+$/i)
                         ) {
                             for (const key in this._global.classes) {
                                 const full = this._global.classes[key];
@@ -347,7 +347,7 @@ export default class GlobalCompletionItemProvider extends AbstractProvider
         document: vscode.TextDocument,
         position: vscode.Position
     ): vscode.CompletionItem[] {
-        let result = new Array<vscode.CompletionItem>();
+        const result = new Array<vscode.CompletionItem>();
         const basePosition = new vscode.Position(position.line, position.character - 2);
         const wordRange = document.getWordRangeAtPosition(basePosition);
         if (wordRange) {

@@ -180,7 +180,7 @@ export default class GlobalSignatureHelpProvider extends AbstractProvider
                 ""
             );
 
-            const re = /((Знач )?[\wа-яА-Я]+)(:\s+[<а-яА-Я\w_\.>\|]+)?( = [^ :]+)?/g;
+            const re = /((Знач )?[\wа-яА-Я]+)(:\s+[<а-яА-Я\w_.>|]+)?( = [^ :]+)?/g;
             let match: RegExpExecArray = re.exec(arraySignature.paramsString);
             while (match) {
                 const documentationParam = this._global.GetDocParam(

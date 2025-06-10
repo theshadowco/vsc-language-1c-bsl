@@ -28,6 +28,7 @@ jobs:
       run: opm install oscript-config       
     - run: npm install
     - run: npm run preLaunch
+    - run: npm run lint
     - run: xvfb-run -a npm test
       if: runner.os == 'Linux'
     - run: npm test
