@@ -752,7 +752,7 @@ export class Global {
 
     public queryref(word: string, collection: any, local = false): any {
         if (!collection) {
-            return new Array();
+            return [];
         }
         const prefix = local ? "" : ".";
         const querystring = {
@@ -769,7 +769,7 @@ export class Global {
         // Проверяем локальный кэш.
         // Проверяем глобальный кэш на модули.
         if (!this.cacheUpdated()) {
-            return new Array();
+            return [];
         } else {
             const prefix = lazy ? "" : "^";
             const suffix = all ? "" : "$";
@@ -965,7 +965,7 @@ export class Global {
                             dataDll[pathDll].content = data;
                         });
                 }
-                const classesOscript: Object = dllDesc["classes"];
+                const classesOscript: object = dllDesc["classes"];
                 const postfix = this.autocompleteLanguage === "en" ? "_en" : "";
                 this.addOscriptGlobalFunction(dllDesc["globalfunctions"], postfix);
                 this.addOscriptClasses(classesOscript, postfix);
@@ -1388,6 +1388,7 @@ export class Global {
                             this.libData[lib].modules[moduleDescr] = {};
                         }
                         const regExpParams = new RegExp(
+                            // eslint-disable-next-line no-control-regex
                             "^\\s*(Параметры|Parameters)\\:?s*\n*((.|\\n)*)",
                             "gm"
                         );
@@ -1499,14 +1500,14 @@ interface IMethodValue {
     description?: string;
     call?: string;
     character?: number;
-    _method?: {};
+    _method?: object;
     oscriptLib?: boolean;
     oscriptClass?: boolean;
 }
 
 interface IVarsValue {
     name: string;
-    _method: Object;
+    _method: object;
     filename: string;
     module: string;
     description: string;
