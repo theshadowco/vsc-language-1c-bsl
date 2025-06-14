@@ -40,7 +40,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
 
     public updateContentPanel(panel: vscode.WebviewPanel, updateContent: boolean) {
         this.webPanel = panel;
-        var result = this.provideTextDocumentContent(updateContent);
+        const result = this.provideTextDocumentContent(updateContent);
         result.then(
             value => panel.webview.html = value
         );
@@ -191,6 +191,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
                 moduleDesc[segment] = {};
             }
             const signature = this._global.GetSignature(expMethod);
+            // eslint-disable-next-line no-control-regex
             const regExpParams = new RegExp("^\\s*(Параметры|Parameters)\\:?s*\n*((.|\\n)*)", "gm");
             const paramsDesc = regExpParams.exec(signature.description);
             let strParamsDesc = "";
@@ -331,10 +332,10 @@ export default class SyntaxHelperProvider extends AbstractProvider {
 
     private async getHTML(fillStructure): Promise<string> {
 
-        let hljs = this.webPanel.webview.asWebviewUri(this.getUriForAsset('highlight.pack.js'));
-        let mdit = this.webPanel.webview.asWebviewUri(this.getUriForAsset('markdown-it.js'));
-        let shjs = this.webPanel.webview.asWebviewUri(this.getUriForAsset('syntaxhelper.js'));
-        let themecss = this.webPanel.webview.asWebviewUri(this.getUriForAsset('theme.css'));
+        const hljs = this.webPanel.webview.asWebviewUri(this.getUriForAsset('highlight.pack.js'));
+        const mdit = this.webPanel.webview.asWebviewUri(this.getUriForAsset('markdown-it.js'));
+        const shjs = this.webPanel.webview.asWebviewUri(this.getUriForAsset('syntaxhelper.js'));
+        const themecss = this.webPanel.webview.asWebviewUri(this.getUriForAsset('theme.css'));
 
         return `<head>
                 <link rel="stylesheet" type="text/css" href="${themecss}">
@@ -491,7 +492,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
                     <div id="contMethod" style = "display:${fillStructure.methodVisible};">
                         <div class="div-desc">
                         <h1 id="headerMethod">${fillStructure.methodHeader}</h1>
-                        <span id = "desc" style='display:${fillStructure.displaySwitch}'>${fillStructure.switch1C}<\span>
+                        <span id = "desc" style='display:${fillStructure.displaySwitch}'>${fillStructure.switch1C}<span>
                         </div>
                         <input type = "button" class = "button btn-close" value = "x" onclick = "closeMethod();">
                         <hr>
@@ -508,7 +509,7 @@ export default class SyntaxHelperProvider extends AbstractProvider {
     }
 
     private getUriForAsset(asset: string): vscode.Uri {
-        let pathToAsset = path.join(
+        const pathToAsset = path.join(
             vscode.extensions.getExtension("1c-syntax.language-1c-bsl").extensionPath,
             "lib",
             asset
@@ -519,9 +520,9 @@ export default class SyntaxHelperProvider extends AbstractProvider {
     private prepareJson(value: string): string {
         return value
         .replace(/[\\]/g, "\\\\")
-        .replace(/[\"]/g, '\\"')
-        .replace(/[\']/g, "\\'")
-        .replace(/[\/]/g, "\\/")
+        .replace(/["]/g, '\\"')
+        .replace(/[']/g, "\\'")
+        .replace(/[/]/g, "\\/")
         .replace(/[\b]/g, "\\b")
         .replace(/[\f]/g, "\\f")
         .replace(/[\n]/g, "\\n")

@@ -84,8 +84,7 @@ export default class LintProvider {
                 const errorFiles = {};
                 let countErrors = 0;
                 for (const line of lines) {
-                    let match;
-                    match = line.match(regex);
+                    const match = line.match(regex);
                     if (match) {
                         const fileName = match[1];
 
