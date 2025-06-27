@@ -54,6 +54,7 @@ export class Global {
      * Признак использования language server (из настроек плагина)
      */
     public languageServerEnabled: boolean
+    public languageServerVersion: string
 
     constructor(adapter?: any) {
         if (adapter) {
