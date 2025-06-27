@@ -114,7 +114,7 @@ export function activate(context: vscode.ExtensionContext) {
                 language: "bsl",
             });
             versionItem.name = "BSL LSP server";
-            versionItem.text = global.languageServerVersion;
+            versionItem.text = global.languageServerVersion || "Unknown";
             versionItem.severity = vscode.LanguageStatusSeverity.Information;
             context.subscriptions.push(versionItem);
         });
