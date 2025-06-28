@@ -14,6 +14,7 @@ import BSLLanguageServerDownloadChannel from "../util/bsllsDownloadChannel";
 import { correctBinname, isOSMacOS, isOSUnix, isOSUnixoid, isOSWindows } from "../util/osUtils";
 import { ServerDownloader } from "../util/serverDownloader";
 import { IStatus } from "../util/status";
+import { Global } from "../global";
 
 const RESTART_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.restart`;
 const RUN_ALL_TESTS_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runAllTests`;
@@ -23,7 +24,7 @@ export default class LanguageClientProvider {
     private bslLsReady = false;
     private languageClient: LanguageClient;
 
-    public async registerLanguageClient(context: vscode.ExtensionContext, status: IStatus) {
+    public async registerLanguageClient(context: vscode.ExtensionContext, status: IStatus, global: Global) {
         const configuration = vscode.workspace.getConfiguration(LANGUAGE_1C_BSL_CONFIG);
         const languageServerEnabled = Boolean(configuration.get("languageServerEnabled"));
 
@@ -149,6 +150,7 @@ export default class LanguageClientProvider {
 
         // await this.languageClient.onReady();
         this.bslLsReady = true;
+        global.languageServerVersion = installedVersion;
     }
 
     public async stop() {

@@ -85,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     const configuration = vscode.workspace.getConfiguration(LANGUAGE_1C_BSL_CONFIG);
-    global.languageServerEnabled = Boolean(configuration.get("languageServerEnabled"))
+    global.languageServerEnabled = Boolean(configuration.get("languageServerEnabled"));
 
     if (!global.languageServerEnabled) {
         context.subscriptions.push(
@@ -108,8 +108,16 @@ export function activate(context: vscode.ExtensionContext) {
         );
     }
 
-    withSpinningStatus(context, async status => {
-        await languageClientProvider.registerLanguageClient(context, status);
+    withSpinningStatus(context, async (status) => {
+        await languageClientProvider.registerLanguageClient(context, status, global).then(() => {
+            const versionItem = vscode.languages.createLanguageStatusItem("BSLLSVersion", {
+                language: "bsl",
+            });
+            versionItem.name = "BSL LSP server";
+            versionItem.text = global.languageServerVersion || "Unknown";
+            versionItem.severity = vscode.LanguageStatusSeverity.Information;
+            context.subscriptions.push(versionItem);
+        });
     });
 
     const syntaxHelper = new SyntaxHelper(global);
@@ -155,10 +163,10 @@ export function activate(context: vscode.ExtensionContext) {
                 "^\\s*(пока|процедура|функция|если|иначе|иначеесли" +
                     "|попытка|исключение|для|while|procedure|function|if|else|elseif|try|for)[^;]*$",
                 "i"
-            )
+            ),
         },
         comments: {
-            lineComment: "//"
+            lineComment: "//",
         },
         __characterPairSupport: {
             autoClosingPairs: [
@@ -167,33 +175,41 @@ export function activate(context: vscode.ExtensionContext) {
                 { open: "(", close: ")" },
                 { open: '"', close: '"', notIn: ["string"] },
                 { open: "'", close: "'", notIn: ["string", "comment"] },
-                { open: "`", close: "`", notIn: ["string", "comment"] }
-            ]
+                { open: "`", close: "`", notIn: ["string", "comment"] },
+            ],
         },
-        brackets: [["{", "}"], ["[", "]"], ["(", ")"]],
+        brackets: [
+            ["{", "}"],
+            ["[", "]"],
+            ["(", ")"],
+        ],
         onEnterRules: [
             {
                 beforeText: /^\s*\|([^"]|"[^"]*")*$/,
                 action: {
                     indentAction: vscode.IndentAction.None,
-                    appendText: "|"
-                }
+                    appendText: "|",
+                },
             },
             {
                 beforeText: /^([^|"]|"[^"]*")*"[^"]*$/,
                 action: {
                     indentAction: vscode.IndentAction.None,
-                    appendText: "|"
-                }
-            }
-        ]
+                    appendText: "|",
+                },
+            },
+        ],
     });
 
     vscode.languages.setLanguageConfiguration("sdbl", {
         comments: {
-            lineComment: "//"
+            lineComment: "//",
         },
-        brackets: [["{", "}"], ["[", "]"], ["(", ")"]]
+        brackets: [
+            ["{", "}"],
+            ["[", "]"],
+            ["(", ")"],
+        ],
     });
 
     context.subscriptions.push(
@@ -209,14 +225,17 @@ export function activate(context: vscode.ExtensionContext) {
                 }
 
                 const autoClosingBrackets = Boolean(
-                    vscode.workspace.getConfiguration("editor.autoClosingBrackets", editor.document.uri)
+                    vscode.workspace.getConfiguration(
+                        "editor.autoClosingBrackets",
+                        editor.document.uri
+                    )
                 );
                 if (textDocumentChangeEvent.contentChanges[0].text.slice(-1) === "(") {
                     const contentChange = textDocumentChangeEvent.contentChanges[0];
                     const point = contentChange.range.start.character + contentChange.text.length;
                     const position = new vscode.Position(editor.selection.active.line, point);
                     if (autoClosingBrackets) {
-                        editor.edit(editBuilder => {
+                        editor.edit((editBuilder) => {
                             editBuilder.insert(
                                 new vscode.Position(position.line, position.character),
                                 ")"
@@ -259,14 +278,14 @@ export function activate(context: vscode.ExtensionContext) {
             );
 
             if (line.text.match(/^\s*\/\/.*$/)) {
-                editor.edit(editBuilder => {
+                editor.edit((editBuilder) => {
                     editBuilder.insert(
                         new vscode.Position(position.line, position.character),
                         `\n${indent}//`
                     );
                 });
             } else {
-                editor.edit(editBuilder => {
+                editor.edit((editBuilder) => {
                     editBuilder.insert(
                         new vscode.Position(position.line, position.character),
                         "\n" + indent
@@ -354,7 +373,7 @@ export function activate(context: vscode.ExtensionContext) {
                 }
                 const word = arrStrings[1];
                 editor
-                    .edit(editBuilder => {
+                    .edit((editBuilder) => {
                         editBuilder.replace(
                             new vscode.Range(
                                 new vscode.Position(
@@ -418,7 +437,7 @@ export function activate(context: vscode.ExtensionContext) {
                 items.push({ label: element, description });
             }
 
-            vscode.window.showQuickPick(items).then(selection => {
+            vscode.window.showQuickPick(items).then((selection) => {
                 if (!selection) {
                     return;
                 }
@@ -436,7 +455,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const arrSnippet = snippetBody.split("$1");
                 if (arrSnippet.length === 1) {
                     editor
-                        .edit(editBuilder => {
+                        .edit((editBuilder) => {
                             editBuilder.replace(editor.selection, snippetBody.replace("$0", t));
                         })
                         .then(() => {
@@ -452,7 +471,7 @@ export function activate(context: vscode.ExtensionContext) {
                         });
                 } else {
                     editor
-                        .edit(editBuilder => {
+                        .edit((editBuilder) => {
                             editBuilder.replace(
                                 editor.selection,
                                 snippetBody.split("$1")[1].replace("$0", t)
@@ -468,7 +487,7 @@ export function activate(context: vscode.ExtensionContext) {
                                 position.line,
                                 position.character
                             );
-                            editor.edit(editBuilder => {
+                            editor.edit((editBuilder) => {
                                 editBuilder.insert(
                                     editor.selection.active,
                                     snippetBody.split("$1")[0].replace("$0", t)
@@ -493,10 +512,10 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand(CMD_OPENCONT, label => {
+        vscode.commands.registerCommand(CMD_OPENCONT, (label) => {
             global.methodForDescription = {
                 label,
-                description: "Экспортные методы bsl"
+                description: "Экспортные методы bsl",
             };
             openSyntaxHelperPanel(syntaxHelper);
         })
@@ -525,7 +544,7 @@ export function activate(context: vscode.ExtensionContext) {
                         if (global.dllData && global.oscriptCacheUpdated) {
                             global.methodForDescription = {
                                 label,
-                                description
+                                description,
                             };
                             openSyntaxHelperPanel(syntaxHelper);
                             clearInterval(interval);
@@ -549,7 +568,7 @@ export function activate(context: vscode.ExtensionContext) {
             items.push({ label: "1C", description: "1С" });
             items.push({
                 label: "oscript-library",
-                description: "oscript-library"
+                description: "oscript-library",
             });
             if (
                 Object.keys(global.subsystems).length > 0 ||
@@ -557,7 +576,7 @@ export function activate(context: vscode.ExtensionContext) {
             ) {
                 items.push({
                     label: "Экспортные методы bsl",
-                    description: "Экспортные методы bsl"
+                    description: "Экспортные методы bsl",
                 });
             }
             const syntaxHelpers = global.syntaxHelpersData;
@@ -603,7 +622,7 @@ export function activate(context: vscode.ExtensionContext) {
                     for (const element in segment) {
                         items.push({
                             label: element,
-                            description: "1С/Глобальный контекст/" + elementSegment
+                            description: "1С/Глобальный контекст/" + elementSegment,
                         });
                     }
                 }
@@ -611,7 +630,7 @@ export function activate(context: vscode.ExtensionContext) {
                     const class1C = libProvider.bslglobals.classes[elementSegment];
                     items.push({
                         label: elementSegment,
-                        description: "1С/Классы/" + elementSegment
+                        description: "1С/Классы/" + elementSegment,
                     });
                     for (const sectionTitle in class1C) {
                         if (sectionTitle !== "properties" && sectionTitle !== "methods") {
@@ -620,7 +639,7 @@ export function activate(context: vscode.ExtensionContext) {
                         for (const element in class1C[sectionTitle]) {
                             items.push({
                                 label: `${elementSegment}.${element}`,
-                                description: "1С/Классы/" + elementSegment
+                                description: "1С/Классы/" + elementSegment,
                             });
                         }
                     }
@@ -629,7 +648,7 @@ export function activate(context: vscode.ExtensionContext) {
                     const class1C = libProvider.bslglobals.systemEnum[elementSegment];
                     items.push({
                         label: elementSegment,
-                        description: "1С/Системные перечисления/" + elementSegment
+                        description: "1С/Системные перечисления/" + elementSegment,
                     });
                     for (const sectionTitle in class1C) {
                         if (sectionTitle !== "properties" && sectionTitle !== "methods") {
@@ -638,7 +657,7 @@ export function activate(context: vscode.ExtensionContext) {
                         for (const element in class1C[sectionTitle]) {
                             items.push({
                                 label: `${elementSegment}.${element}`,
-                                description: "1С/Системные перечисления/" + elementSegment
+                                description: "1С/Системные перечисления/" + elementSegment,
                             });
                         }
                     }
@@ -654,7 +673,7 @@ export function activate(context: vscode.ExtensionContext) {
                     for (const sectionTitle in segment) {
                         items.push({
                             label: sectionTitle,
-                            description: "OneScript/Глобальный контекст/" + element
+                            description: "OneScript/Глобальный контекст/" + element,
                         });
                     }
                 }
@@ -662,7 +681,7 @@ export function activate(context: vscode.ExtensionContext) {
                     const classOscript = libProvider.oscriptStdLib.classes[element];
                     items.push({
                         label: classOscript["name" + postfix],
-                        description: "OneScript/Классы/" + element
+                        description: "OneScript/Классы/" + element,
                     });
                     for (const sectionTitle in classOscript) {
                         if (sectionTitle !== "properties" && sectionTitle !== "methods") {
@@ -674,7 +693,7 @@ export function activate(context: vscode.ExtensionContext) {
                                 label: `${classOscript["name" + postfix]}.${
                                     method["name" + postfix]
                                 }`,
-                                description: "OneScript/Классы/" + element
+                                description: "OneScript/Классы/" + element,
                             });
                         }
                     }
@@ -683,7 +702,7 @@ export function activate(context: vscode.ExtensionContext) {
                     const classOscript = libProvider.oscriptStdLib.systemEnum[element];
                     items.push({
                         label: classOscript["name" + postfix],
-                        description: "OneScript/Системные перечисления/" + element
+                        description: "OneScript/Системные перечисления/" + element,
                     });
                     for (const sectionTitle in classOscript) {
                         if (sectionTitle !== "properties" && sectionTitle !== "methods") {
@@ -695,7 +714,7 @@ export function activate(context: vscode.ExtensionContext) {
                                 label: `${classOscript["name" + postfix]}.${
                                     method["name" + postfix]
                                 }`,
-                                description: "OneScript/Системные перечисления/" + element
+                                description: "OneScript/Системные перечисления/" + element,
                             });
                         }
                     }
@@ -706,7 +725,7 @@ export function activate(context: vscode.ExtensionContext) {
             // pick one
             const options = {
                 placeHolder: "Введите название метода",
-                matchOnDescription: false
+                matchOnDescription: false,
             };
             if (!global.syntaxFilled) {
                 if (vscode.window.activeTextEditor.document.fileName.endsWith(".bsl")) {
@@ -715,7 +734,7 @@ export function activate(context: vscode.ExtensionContext) {
                     fillLabel("OneScript", "OneScript");
                 }
             } else {
-                vscode.window.showQuickPick(items, options).then(selection => {
+                vscode.window.showQuickPick(items, options).then((selection) => {
                     if (typeof selection === "undefined") {
                         return;
                     }
@@ -737,21 +756,20 @@ export function activate(context: vscode.ExtensionContext) {
     function checkSyntaxWebPanel() {
         if (syntaxPanel == null) {
             syntaxPanel = vscode.window.createWebviewPanel(
-                'syntax-bsl',
+                "syntax-bsl",
                 "Синтаксис-помощник", // Синтаксис-помощник 1С
                 vscode.ViewColumn.Two,
                 {
-                    enableScripts: true, 
-                    enableCommandUris: true
-                });    
-            syntaxPanel.onDidDispose(
-                () => {
-                    syntaxPanel = null;    
+                    enableScripts: true,
+                    enableCommandUris: true,
                 }
             );
+            syntaxPanel.onDidDispose(() => {
+                syntaxPanel = null;
+            });
         }
     }
-    
+
     function openSyntaxHelperPanel(syntaxHelper) {
         const updateContent: boolean = !syntaxPanel;
         if (Object.keys(global.contentData).length == 0) {
@@ -760,12 +778,12 @@ export function activate(context: vscode.ExtensionContext) {
                 global.contentData[dll].description = global.dllData[dll].description;
                 global.contentData[dll].content = global.dllData[dll].content;
             }
-            for(const lib in global.libData) {
+            for (const lib in global.libData) {
                 global.contentData[lib] = {};
                 global.contentData[lib].description = global.libData[lib].description;
                 global.contentData[lib].content = global.libData[lib].content;
             }
-            for(const sp in global.syntaxHelpersData) {
+            for (const sp in global.syntaxHelpersData) {
                 global.contentData[sp] = {};
                 global.contentData[sp].description = global.syntaxHelpersData[sp].description;
                 global.contentData[sp].content = global.syntaxHelpersData[sp].content;
@@ -775,14 +793,13 @@ export function activate(context: vscode.ExtensionContext) {
         syntaxHelper.updateContentPanel(syntaxPanel, updateContent);
         syntaxPanel.reveal(vscode.ViewColumn.Two);
     }
-
 }
 
 export function deactivate(): Thenable<void> | undefined {
-	if (!languageClientProvider) {
-		return undefined;
-	}
-	return languageClientProvider.stop();
+    if (!languageClientProvider) {
+        return undefined;
+    }
+    return languageClientProvider.stop();
 }
 
 export async function waitForBSLLSActivation() {
@@ -819,7 +836,7 @@ async function createMarkdown(global): Promise<void> {
     const filepath = editor.document.fileName.replace(/\\/g, "/");
     const filename = Path.basename(filepath, Path.extname(filepath));
     const methods = global.db.find({
-        filename: filepath
+        filename: filepath,
     });
 
     let md = "";
@@ -844,7 +861,7 @@ async function createMarkdown(global): Promise<void> {
         const procPrefix = method.isproc ? "Процедура" : "Функция";
         const isExport = method.isExport ? "Экспорт" : "";
         let params = "";
-        method._method.Params.forEach(param => {
+        method._method.Params.forEach((param) => {
             if (param.byval) {
                 params += "Знач ";
             }
@@ -879,9 +896,9 @@ async function createMarkdown(global): Promise<void> {
     md += methodsDefinitions;
 
     const saveDialogOptions: vscode.SaveDialogOptions = {
-        filters: { Markdown: ["md"] }
+        filters: { Markdown: ["md"] },
     };
-    vscode.window.showSaveDialog(saveDialogOptions).then(fileUri => {
+    vscode.window.showSaveDialog(saveDialogOptions).then((fileUri) => {
         openEditor(fileUri, md);
     });
 }
@@ -895,7 +912,7 @@ async function openEditor(fileUri, md) {
             1,
             false
         );
-        openedEditor.edit(edit => {
+        openedEditor.edit((edit) => {
             edit.insert(new vscode.Position(0, 0), md);
         });
     } catch (error) {
@@ -927,7 +944,7 @@ function findMethod(lineMethod, re, editor, global, arrComment, all, enMode) {
 }
 
 function insertComments(editor, arrComment) {
-    editor.edit(editBuilder => {
+    editor.edit((editBuilder) => {
         for (const iterator of arrComment) {
             editBuilder.replace(new vscode.Position(iterator.indexLine, 0), iterator.comment);
         }
@@ -990,7 +1007,7 @@ async function withSpinningStatus(
 }
 
 function delay(milliseconds: number) {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
         setTimeout(resolve, milliseconds);
     });
 }
