@@ -50,6 +50,12 @@ export function activate(context: vscode.ExtensionContext) {
     const quickOpen = new BslQuickOpen(global);
     const taskProvider = new TaskProvider();
 
+    // Create status bar item for messages and add to subscriptions
+    const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
+    statusBarItem.tooltip = "Language 1C (BSL)";
+    context.subscriptions.push(statusBarItem);
+    vscAdapter.setStatusBarItem(statusBarItem);
+
     let syntaxPanel: vscode.WebviewPanel;
 
     // vscode.workspace.onDidChangeConfiguration(taskProvider.onConfigurationChanged);
@@ -796,7 +802,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
-    vscAdapter.disposeStatusBarItem();
     if (!languageClientProvider) {
         return undefined;
     }

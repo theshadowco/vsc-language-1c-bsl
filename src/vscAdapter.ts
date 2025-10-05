@@ -3,11 +3,19 @@ import * as vscode from "vscode";
 
 let statusBarItem: vscode.StatusBarItem | undefined;
 
+export function setStatusBarItem(item: vscode.StatusBarItem) {
+    statusBarItem = item;
+}
+
 export function postMessage(description: string, interval?: number) {
-    // Create status bar item if it doesn't exist
     if (!statusBarItem) {
-        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
-        statusBarItem.tooltip = "Language 1C (BSL)";
+        // Fallback to simple message if status bar item not initialized
+        if (interval) {
+            vscode.window.setStatusBarMessage(description, interval);
+        } else {
+            vscode.window.setStatusBarMessage(description);
+        }
+        return;
     }
     
     statusBarItem.text = description;
@@ -109,11 +117,4 @@ export function findFilesForCache(searchPattern: string, rootPath: string) {
         }
         this.addtocachefiles(files, rootPath);
     });
-}
-
-export function disposeStatusBarItem() {
-    if (statusBarItem) {
-        statusBarItem.dispose();
-        statusBarItem = undefined;
-    }
 }
