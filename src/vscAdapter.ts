@@ -1,11 +1,24 @@
 import * as glob from "glob";
 import * as vscode from "vscode";
 
+let statusBarItem: vscode.StatusBarItem | undefined;
+
 export function postMessage(description: string, interval?: number) {
+    // Create status bar item if it doesn't exist
+    if (!statusBarItem) {
+        statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, -100);
+        statusBarItem.tooltip = "Language 1C (BSL)";
+    }
+    
+    statusBarItem.text = description;
+    statusBarItem.show();
+    
     if (interval) {
-        vscode.window.setStatusBarMessage(description, interval);
-    } else {
-        vscode.window.setStatusBarMessage(description);
+        setTimeout(() => {
+            if (statusBarItem) {
+                statusBarItem.hide();
+            }
+        }, interval);
     }
 }
 
@@ -96,4 +109,11 @@ export function findFilesForCache(searchPattern: string, rootPath: string) {
         }
         this.addtocachefiles(files, rootPath);
     });
+}
+
+export function disposeStatusBarItem() {
+    if (statusBarItem) {
+        statusBarItem.dispose();
+        statusBarItem = undefined;
+    }
 }

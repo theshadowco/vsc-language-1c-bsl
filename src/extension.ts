@@ -796,6 +796,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate(): Thenable<void> | undefined {
+    vscAdapter.disposeStatusBarItem();
     if (!languageClientProvider) {
         return undefined;
     }
