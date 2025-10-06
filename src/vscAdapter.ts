@@ -3,10 +3,23 @@ import * as vscode from "vscode";
 
 let statusBarItem: vscode.StatusBarItem | undefined;
 
+/**
+ * Registers the StatusBarItem instance that module helpers will use to display status messages.
+ *
+ * @param item - The VS Code StatusBarItem to be used by postMessage and other status utilities
+ */
 export function setStatusBarItem(item: vscode.StatusBarItem) {
     statusBarItem = item;
 }
 
+/**
+ * Update and show the configured status bar item with the given text.
+ *
+ * If no status bar item has been set, the function does nothing.
+ *
+ * @param description - Text to display in the status bar
+ * @param interval - Optional timeout in milliseconds after which the status bar item will be hidden; if omitted, the item remains visible
+ */
 export function postMessage(description: string, interval?: number) {
     if (!statusBarItem) {
         return;
