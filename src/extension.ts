@@ -35,7 +35,15 @@ const languageClientProvider = new LanguageClientProvider();
 export const oscriptLinter = new LintProvider();
 
 // this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+/**
+ * Initialize the extension: register language features, commands, UI elements, and activation tasks.
+ *
+ * Sets up language providers (completion, hover, definitions, references, symbols, signature help, formatting),
+ * configures the language server and its status, registers commands and editor/event handlers, enables the
+ * syntax helper webview, and activates linters and other background providers.
+ *
+ * @param context - The extension context used to register disposables and subscriptions for the activation lifecycle
+ */
 export function activate(context: vscode.ExtensionContext) {
     const CMD_UPDATE = "language-1c-bsl.update";
     const CMD_CREATECOMMENTS = "language-1c-bsl.createComments";
