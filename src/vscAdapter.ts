@@ -2,6 +2,7 @@ import * as glob from "glob";
 import * as vscode from "vscode";
 
 let statusBarItem: vscode.StatusBarItem | undefined;
+let hideTimeout: NodeJS.Timeout | undefined;
 
 /**
  * Registers the StatusBarItem instance that module helpers will use to display status messages.
@@ -25,14 +26,21 @@ export function postMessage(description: string, interval?: number) {
         return;
     }
     
+    // Clear any existing timeout to prevent it from hiding a new message
+    if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = undefined;
+    }
+    
     statusBarItem.text = description;
     statusBarItem.show();
     
     if (interval) {
-        setTimeout(() => {
+        hideTimeout = setTimeout(() => {
             if (statusBarItem) {
                 statusBarItem.hide();
             }
+            hideTimeout = undefined;
         }, interval);
     }
 }
