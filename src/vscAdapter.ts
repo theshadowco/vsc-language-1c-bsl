@@ -40,7 +40,6 @@ export function postMessage(description: string, interval?: number) {
             if (statusBarItem) {
                 statusBarItem.hide();
             }
-            hideTimeout = undefined;
         }, interval);
     }
 }
