@@ -3,10 +3,9 @@
 # Поддержка языка 1С:Предприятие 8 (BSL) в VSC
 
 [![GitHub release](https://img.shields.io/github/release/1c-syntax/vsc-language-1c-bsl.svg)](https://github.com/1c-syntax/vsc-language-1c-bsl/blob/master/CHANGELOG.md)
-[![Build Status](https://travis-ci.org/1c-syntax/vsc-language-1c-bsl.svg?branch=develop)](https://travis-ci.org/1c-syntax/vsc-language-1c-bsl)
+[![Build Status](https://github.com/1c-syntax/vsc-language-1c-bsl/actions/workflows/test.yml/badge.svg?branch=develop)](https://github.com/1c-syntax/vsc-language-1c-bsl/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/1c-syntax/vsc-language-1c-bsl/branch/develop/graph/badge.svg)](https://codecov.io/gh/1c-syntax/vsc-language-1c-bsl)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=vsc-language-bsl-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=vsc-language-bsl-plugin)
-[![Greenkeeper badge](https://badges.greenkeeper.io/1c-syntax/vsc-language-1c-bsl.svg)](https://greenkeeper.io/)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 Плагин добавляет подсветку синтаксиса в файлах \*.bsl и \*.os:
