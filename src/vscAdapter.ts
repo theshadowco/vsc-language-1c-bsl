@@ -9,12 +9,6 @@ export function setStatusBarItem(item: vscode.StatusBarItem) {
 
 export function postMessage(description: string, interval?: number) {
     if (!statusBarItem) {
-        // Fallback to simple message if status bar item not initialized
-        if (interval) {
-            vscode.window.setStatusBarMessage(description, interval);
-        } else {
-            vscode.window.setStatusBarMessage(description);
-        }
         return;
     }
     
