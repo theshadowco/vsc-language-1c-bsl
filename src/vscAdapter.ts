@@ -1,11 +1,46 @@
 import * as glob from "glob";
 import * as vscode from "vscode";
 
+let statusBarItem: vscode.StatusBarItem | undefined;
+let hideTimeout: NodeJS.Timeout | undefined;
+
+/**
+ * Registers the StatusBarItem instance that module helpers will use to display status messages.
+ *
+ * @param item - The VS Code StatusBarItem to be used by postMessage and other status utilities
+ */
+export function setStatusBarItem(item: vscode.StatusBarItem) {
+    statusBarItem = item;
+}
+
+/**
+ * Update and show the configured status bar item with the given text.
+ *
+ * If no status bar item has been set, the function does nothing.
+ *
+ * @param description - Text to display in the status bar
+ * @param interval - Optional timeout in milliseconds after which the status bar item will be hidden; if omitted, the item remains visible
+ */
 export function postMessage(description: string, interval?: number) {
+    if (!statusBarItem) {
+        return;
+    }
+    
+    // Clear any existing timeout to prevent it from hiding a new message
+    if (hideTimeout) {
+        clearTimeout(hideTimeout);
+        hideTimeout = undefined;
+    }
+    
+    statusBarItem.text = description;
+    statusBarItem.show();
+    
     if (interval) {
-        vscode.window.setStatusBarMessage(description, interval);
-    } else {
-        vscode.window.setStatusBarMessage(description);
+        hideTimeout = setTimeout(() => {
+            if (statusBarItem) {
+                statusBarItem.hide();
+            }
+        }, interval);
     }
 }
 
