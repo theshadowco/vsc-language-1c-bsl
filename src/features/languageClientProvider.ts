@@ -19,6 +19,7 @@ import { Global } from "../global";
 const RESTART_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.restart`;
 const RUN_ALL_TESTS_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runAllTests`;
 const RUN_TEST_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runTest`;
+const DEBUG_TEST_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.debugTest`;
 
 export default class LanguageClientProvider {
     private bslLsReady = false;
@@ -145,6 +146,15 @@ export default class LanguageClientProvider {
             vscode.commands.registerCommand(RUN_TEST_COMMAND, async (args: RunTestArgs) => {
                 terminal.show();
                 terminal.sendText(args.text);
+            }),
+            vscode.commands.registerCommand(DEBUG_TEST_COMMAND, async (args: RunTestArgs) => {
+
+                if (terminal.state.shell) {
+                    terminal.show();
+                    terminal.sendText(args.text);
+                    vscode.commands.executeCommand("workbench.action.debug.start");
+                }
+
             })
         );
 
