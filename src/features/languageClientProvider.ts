@@ -152,9 +152,8 @@ export default class LanguageClientProvider {
                 if (terminal.state.shell) {
                     terminal.show();
                     terminal.sendText(args.text);
+                    vscode.commands.executeCommand("workbench.action.debug.start");
                 }
-
-                vscode.commands.executeCommand("workbench.action.debug.start");
 
             })
         );
