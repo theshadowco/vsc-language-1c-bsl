@@ -4,7 +4,8 @@ import * as glob from "glob";
 import * as path from "path";
 
 import FileQueue = require("filequeue");
-import loki = require("lokijs");
+const lokiModule = require("lokijs");
+const Loki = lokiModule.Loki || lokiModule;
 import Parser = require("onec-syntaxparser");
 import xml2js = require("xml2js");
 const fq = new FileQueue(500);
@@ -64,7 +65,7 @@ export class Global {
         this.autocompleteLanguage = this.getConfigurationKey(configuration, "languageAutocomplete");
         const postfix = this.autocompleteLanguage === "en" ? "_en" : "";
         this.toreplaced = this.getReplaceMetadata();
-        this.cache = new loki("gtags.json");
+        this.cache = new Loki("gtags.json");
         this.globalfunctions = {};
         this.globalvariables = {};
         this.systemEnum = {};
