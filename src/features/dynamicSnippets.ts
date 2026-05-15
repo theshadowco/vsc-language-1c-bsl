@@ -1,4 +1,13 @@
-export function dynamicSnippets(): any {
+type DynamicSnippet = {
+    body: string,
+    description: string
+};
+
+export type DynamicSnippets = {
+    [index: string]: DynamicSnippet
+}
+
+export function dynamicSnippets(): DynamicSnippets {
     const data = {
         "Если": {
             body: "Если $1 Тогда\n\t$0\nКонецЕсли;",
