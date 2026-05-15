@@ -28,6 +28,7 @@ import * as vscAdapter from "./vscAdapter";
 
 import LibProvider from "./libProvider";
 import { IStatus, StatusBarEntry } from "./util/status";
+import { DynamicSnippets } from "./features/dynamicSnippets";
 
 const libProvider = new LibProvider();
 const languageClientProvider = new LanguageClientProvider();
@@ -69,37 +70,41 @@ export function activate(context: vscode.ExtensionContext) {
     // vscode.workspace.onDidChangeConfiguration(taskProvider.onConfigurationChanged);
     taskProvider.onConfigurationChanged();
 
-    context.subscriptions.push(
-        vscode.languages.registerCompletionItemProvider(
-            BSL_MODE,
-            new CompletionItemProvider(global),
-            ".",
-            "="
-        )
-    );
-    context.subscriptions.push(
-        vscode.languages.registerDefinitionProvider(BSL_MODE, new DefinitionProvider(global))
-    );
-    context.subscriptions.push(
-        vscode.languages.registerReferenceProvider(BSL_MODE, new ReferenceProvider(global))
-    );
-    context.subscriptions.push(
-        vscode.languages.registerWorkspaceSymbolProvider(new WorkspaseSymbolProvider(global))
-    );
-    context.subscriptions.push(
-        vscode.languages.registerSignatureHelpProvider(
-            BSL_MODE,
-            new SignatureHelpProvider(global),
-            "(",
-            ","
-        )
-    );
-    context.subscriptions.push(
-        vscode.languages.registerHoverProvider(BSL_MODE, new HoverProvider(global))
-    );
-
     const configuration = vscode.workspace.getConfiguration(LANGUAGE_1C_BSL_CONFIG);
+    
     global.languageServerEnabled = Boolean(configuration.get("languageServerEnabled"));
+    const contextSystemEnabled = Boolean(configuration.get("contextSystemEnabled"));
+
+    if (contextSystemEnabled) {
+        context.subscriptions.push(
+            vscode.languages.registerCompletionItemProvider(
+                BSL_MODE,
+                new CompletionItemProvider(global),
+                ".",
+                "="
+            )
+        );
+        context.subscriptions.push(
+            vscode.languages.registerDefinitionProvider(BSL_MODE, new DefinitionProvider(global))
+        );
+        context.subscriptions.push(
+            vscode.languages.registerReferenceProvider(BSL_MODE, new ReferenceProvider(global))
+        );
+        context.subscriptions.push(
+            vscode.languages.registerWorkspaceSymbolProvider(new WorkspaseSymbolProvider(global))
+        );
+        context.subscriptions.push(
+            vscode.languages.registerSignatureHelpProvider(
+                BSL_MODE,
+                new SignatureHelpProvider(global),
+                "(",
+                ","
+            )
+        );
+        context.subscriptions.push(
+            vscode.languages.registerHoverProvider(BSL_MODE, new HoverProvider(global))
+        );
+    }
 
     if (!global.languageServerEnabled) {
         context.subscriptions.push(
@@ -226,47 +231,51 @@ export function activate(context: vscode.ExtensionContext) {
         ],
     });
 
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(
-            async (textDocumentChangeEvent: vscode.TextDocumentChangeEvent) => {
-                const editor = vscode.window.activeTextEditor;
-                if (
-                    !editor ||
-                    editor.document.languageId !== "bsl" ||
-                    textDocumentChangeEvent.contentChanges.length === 0
-                ) {
-                    return;
-                }
-
-                const autoClosingBrackets = Boolean(
-                    vscode.workspace.getConfiguration(
-                        "editor.autoClosingBrackets",
-                        editor.document.uri
-                    )
-                );
-                if (textDocumentChangeEvent.contentChanges[0].text.slice(-1) === "(") {
-                    const contentChange = textDocumentChangeEvent.contentChanges[0];
-                    const point = contentChange.range.start.character + contentChange.text.length;
-                    const position = new vscode.Position(editor.selection.active.line, point);
-                    if (autoClosingBrackets) {
-                        editor.edit((editBuilder) => {
-                            editBuilder.insert(
-                                new vscode.Position(position.line, position.character),
-                                ")"
-                            );
-                        });
+    if (contextSystemEnabled) {
+        context.subscriptions.push(
+            vscode.workspace.onDidChangeTextDocument(
+                async (textDocumentChangeEvent: vscode.TextDocumentChangeEvent) => {
+                    const editor = vscode.window.activeTextEditor;
+                    if (
+                        !editor ||
+                        editor.document.languageId !== "bsl" ||
+                        textDocumentChangeEvent.contentChanges.length === 0
+                    ) {
+                        return;
                     }
-                    vscode.commands.executeCommand("editor.action.triggerParameterHints");
-                    vscode.window.activeTextEditor.selection = new vscode.Selection(
-                        position.line,
-                        position.character,
-                        position.line,
-                        position.character
+
+                    const autoClosingBrackets = Boolean(
+                        vscode.workspace.getConfiguration(
+                            "editor.autoClosingBrackets",
+                            editor.document.uri
+                        )
                     );
+                    if (textDocumentChangeEvent.contentChanges[0].text.slice(-1) === "(") {
+                        const contentChange = textDocumentChangeEvent.contentChanges[0];
+                        const point = contentChange.range.start.character + contentChange.text.length;
+                        const position = new vscode.Position(editor.selection.active.line, point);
+                        if (autoClosingBrackets) {
+                            editor.edit((editBuilder) => {
+                                editBuilder.insert(
+                                    new vscode.Position(position.line, position.character),
+                                    ")"
+                                );
+                            });
+                        }
+                        vscode.commands.executeCommand("editor.action.triggerParameterHints");
+                        if (vscode.window.activeTextEditor) {
+                            vscode.window.activeTextEditor.selection = new vscode.Selection(
+                                position.line,
+                                position.character,
+                                position.line,
+                                position.character
+                            );
+                        }
+                    }
                 }
-            }
-        )
-    );
+            )
+        );
+    }
 
     const methodDetect = new MethodDetect();
     const controller = new MethodController(methodDetect);
@@ -309,31 +318,34 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    context.subscriptions.push(
-        vscode.window.onDidChangeActiveTextEditor((textEditor: vscode.TextEditor) => {
-            if (!textEditor) {
-                return;
-            }
-            if (!global.cache.getCollection(textEditor.document.fileName)) {
-                global.getRefsLocal(textEditor.document.fileName, textEditor.document.getText());
-            }
-            if (vscode.workspace.workspaceFolders) {
-                for (const element of vscode.workspace.textDocuments) {
-                    if (element.isDirty && element.languageId === "bsl") {
-                        global.customUpdateCache(element.getText(), element.fileName);
+    if (contextSystemEnabled) {
+        context.subscriptions.push(
+            vscode.window.onDidChangeActiveTextEditor((textEditor: vscode.TextEditor | undefined) => {
+                if (!textEditor) {
+                    return;
+                }
+                if (!global.cache.getCollection(textEditor.document.fileName)) {
+                    global.getRefsLocal(textEditor.document.fileName, textEditor.document.getText());
+                }
+                if (vscode.workspace.workspaceFolders) {
+                    for (const element of vscode.workspace.textDocuments) {
+                        if (element.isDirty && element.languageId === "bsl") {
+                            global.customUpdateCache(element.getText(), element.fileName);
+                        }
                     }
                 }
-            }
-        })
-    );
+            })
+        );
 
-    context.subscriptions.push(
-        vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-            if (vscode.workspace.workspaceFolders) {
-                global.customUpdateCache(document.getText(), document.fileName);
-            }
-        })
-    );
+        context.subscriptions.push(
+            vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
+                if (vscode.workspace.workspaceFolders) {
+                    global.customUpdateCache(document.getText(), document.fileName);
+                }
+            })
+        );
+
+    }
 
     context.subscriptions.push(
         vscode.commands.registerCommand(CMD_EXPANDABBREVIATION, () => {
@@ -422,17 +434,17 @@ export function activate(context: vscode.ExtensionContext) {
             if (!editor || editor.selection.isEmpty) {
                 return;
             }
-            const dynamicSnippetsCollection = {};
+            const dynamicSnippetsCollection = {} as DynamicSnippets;
             for (const element in dynamicSnippets.dynamicSnippets()) {
                 const snippet = dynamicSnippets.dynamicSnippets()[element];
                 dynamicSnippetsCollection[element] = snippet;
             }
             const configuration = vscode.workspace.getConfiguration(LANGUAGE_1C_BSL_CONFIG);
             const userDynamicSnippetsList: string[] = configuration.get("dynamicSnippets", []);
-            for (const index of userDynamicSnippetsList) {
+            for (const userDynamicSnippet of userDynamicSnippetsList) {
                 try {
                     const userDynamicSnippetsString = fs.readFileSync(
-                        userDynamicSnippetsList[index],
+                        userDynamicSnippet,
                         "utf-8"
                     );
                     const snippetsData = JSON.parse(userDynamicSnippetsString);
@@ -759,13 +771,15 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    if (vscode.window.activeTextEditor) {
-        global.getRefsLocal(
-            vscode.window.activeTextEditor.document.fileName,
-            vscode.window.activeTextEditor.document.getText()
-        );
+    if (contextSystemEnabled) {
+        if (vscode.window.activeTextEditor) {
+            global.getRefsLocal(
+                vscode.window.activeTextEditor.document.fileName,
+                vscode.window.activeTextEditor.document.getText()
+            );
+        }
+        global.updateCache();
     }
-    global.updateCache();
 
     function checkSyntaxWebPanel() {
         if (syntaxPanel == null) {
