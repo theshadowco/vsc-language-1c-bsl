@@ -547,10 +547,27 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
+    // Делегируем on-type-форматирование на BSL LS, если он сообщил о поддержке
+    // textDocument/onTypeFormatting через LSP-capability. Когда поддержки нет
+    // (LS отключён или старая версия без объявленной capability) — используем
+    // встроенный fallback-провайдер расширения.
+    const builtInOnTypeProvider = new DocumentFormattingEditProvider(global);
     context.subscriptions.push(
         vscode.languages.registerOnTypeFormattingEditProvider(
             BSL_MODE,
-            new DocumentFormattingEditProvider(global),
+            {
+                provideOnTypeFormattingEdits(document, position, ch, options) {
+                    if (languageClientProvider.serverHandlesOnTypeFormatting()) {
+                        return [];
+                    }
+                    return builtInOnTypeProvider.provideOnTypeFormattingEdits(
+                        document,
+                        position,
+                        ch,
+                        options
+                    );
+                }
+            },
             "\n"
         )
     );

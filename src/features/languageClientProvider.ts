@@ -176,6 +176,20 @@ export default class LanguageClientProvider {
         return this.bslLsReady;
     }
 
+    /**
+     * Возвращает true, если запущенный BSL Language Server по контракту LSP
+     * (initializeResult.capabilities) сообщил о поддержке textDocument/onTypeFormatting.
+     * Используется для отключения встроенного в расширение on-type-форматтера,
+     * когда формат-движок есть на стороне LS.
+     */
+    public serverHandlesOnTypeFormatting(): boolean {
+        if (!this.bslLsReady || !this.languageClient) {
+            return false;
+        }
+        const capability = this.languageClient.initializeResult?.capabilities?.documentOnTypeFormattingProvider;
+        return Boolean(capability);
+    }
+
     private async createLanguageClient(
         context: vscode.ExtensionContext,
         binaryName: string
