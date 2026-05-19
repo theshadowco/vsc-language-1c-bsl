@@ -120,6 +120,13 @@ export function activate(context: vscode.ExtensionContext) {
             )
         );
         context.subscriptions.push(
+            vscode.languages.registerOnTypeFormattingEditProvider(
+                BSL_MODE,
+                new DocumentFormattingEditProvider(global),
+                "\n"
+            )
+        );
+        context.subscriptions.push(
             vscode.languages.registerDocumentSymbolProvider(
                 BSL_MODE,
                 new DocumentSymbolProvider(global)
@@ -545,14 +552,6 @@ export function activate(context: vscode.ExtensionContext) {
             };
             openSyntaxHelperPanel(syntaxHelper);
         })
-    );
-
-    context.subscriptions.push(
-        vscode.languages.registerOnTypeFormattingEditProvider(
-            BSL_MODE,
-            new DocumentFormattingEditProvider(global),
-            "\n"
-        )
     );
 
     context.subscriptions.push(
