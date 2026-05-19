@@ -125,7 +125,10 @@ export function findFilesForCache(searchPattern: string, rootPath: string) {
     };
     glob.glob(searchPattern, globOptions)
         .then((files) => {
-            this.addtocachefiles(files as string[], rootPath);
+            this.addtocachefiles(
+                (files as string[]).map((f) => f.replace(/\\/g, "/")),
+                rootPath
+            );
         })
         .catch((err) => {
             console.error(err);

@@ -232,7 +232,9 @@ export default class SyntaxHelperProvider extends AbstractProvider {
             nocase: true,
             absolute: true
         };
-        const files = glob.globSync(searchPattern, globOptions) as string[];
+        const files = (glob.globSync(searchPattern, globOptions) as string[]).map((f) =>
+            f.replace(/\\/g, "/")
+        );
         const subs = this.addSubsystems(files);
         return subs;
     }

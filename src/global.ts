@@ -620,7 +620,9 @@ export class Global {
                     };
                     glob.glob(libSearchPattern, globOptions)
                         .then((files) => {
-                            this.addOscriptLibrariesToCache(files as string[]);
+                            this.addOscriptLibrariesToCache(
+                                (files as string[]).map((f) => f.replace(/\\/g, "/"))
+                            );
                         })
                         .catch((err) => {
                             console.error(err);
@@ -635,7 +637,9 @@ export class Global {
                     };
                     glob.glob(libSearchPattern, globOptions)
                         .then((files) => {
-                            this.dllData = this.addOscriptDll(files as string[]);
+                            this.dllData = this.addOscriptDll(
+                                (files as string[]).map((f) => f.replace(/\\/g, "/"))
+                            );
                         })
                         .catch((err) => {
                             console.error(err);
@@ -667,7 +671,11 @@ export class Global {
             };
             glob.glob(searchPattern, globOptions)
                 .then((files) => {
-                    this.addOscriptFilesToCache("", files as string[], true);
+                    this.addOscriptFilesToCache(
+                        "",
+                        (files as string[]).map((f) => f.replace(/\\/g, "/")),
+                        true
+                    );
                 })
                 .catch((err) => {
                     console.error(err);
@@ -678,7 +686,10 @@ export class Global {
                     : "**/{modules,модули}/*.os";
             glob.glob(searchPattern, globOptions)
                 .then((files) => {
-                    this.addOscriptFilesToCache("", files as string[]);
+                    this.addOscriptFilesToCache(
+                        "",
+                        (files as string[]).map((f) => f.replace(/\\/g, "/"))
+                    );
                 })
                 .catch((err) => {
                     console.error(err);
@@ -1144,7 +1155,9 @@ export class Global {
         };
         glob.glob(searchPattern, globOptions)
             .then((files) => {
-                this.addSubsystemsToCache(files as string[]);
+                this.addSubsystemsToCache(
+                    (files as string[]).map((f) => f.replace(/\\/g, "/"))
+                );
             })
             .catch((err) => {
                 console.error(err);
