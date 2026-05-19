@@ -613,31 +613,33 @@ export class Global {
                 const lines = result.split(/\r?\n/);
                 let libSearchPattern = "*/lib.config";
                 for (const line of lines) {
-                    const globOptions: glob.IOptions = {};
-                    globOptions.nocase = true;
-                    globOptions.cwd = line;
-                    globOptions.absolute = true;
-                    glob(libSearchPattern, globOptions, (err, files) => {
-                        if (err) {
+                    const globOptions: glob.GlobOptions = {
+                        nocase: true,
+                        cwd: line,
+                        absolute: true
+                    };
+                    glob.glob(libSearchPattern, globOptions)
+                        .then((files) => {
+                            this.addOscriptLibrariesToCache(files as string[]);
+                        })
+                        .catch((err) => {
                             console.error(err);
-                            return;
-                        }
-                        this.addOscriptLibrariesToCache(files);
-                    });
+                        });
                 }
                 libSearchPattern = "**/syntaxHelp.json";
                 for (const line of lines) {
-                    const globOptions: glob.IOptions = {};
-                    globOptions.nocase = true;
-                    globOptions.cwd = line;
-                    globOptions.absolute = true;
-                    glob(libSearchPattern, globOptions, (err, files) => {
-                        if (err) {
+                    const globOptions: glob.GlobOptions = {
+                        nocase: true,
+                        cwd: line,
+                        absolute: true
+                    };
+                    glob.glob(libSearchPattern, globOptions)
+                        .then((files) => {
+                            this.dllData = this.addOscriptDll(files as string[]);
+                        })
+                        .catch((err) => {
                             console.error(err);
-                            return;
-                        }
-                        this.dllData = this.addOscriptDll(files);
-                    });
+                        });
                 }
                 const syntaxHelpers = [
                     path.join(
@@ -657,29 +659,30 @@ export class Global {
                 basePath !== ""
                     ? basePath.substr(2) + "**/{classes,классы}/*.os"
                     : "**/{classes,классы}/*.os";
-            const globOptions: glob.IOptions = {};
-            globOptions.dot = true;
-            globOptions.cwd = rootPath;
-            globOptions.nocase = true;
-            globOptions.absolute = true;
-            glob(searchPattern, globOptions, (err, files) => {
-                if (err) {
+            const globOptions: glob.GlobOptions = {
+                dot: true,
+                cwd: rootPath,
+                nocase: true,
+                absolute: true
+            };
+            glob.glob(searchPattern, globOptions)
+                .then((files) => {
+                    this.addOscriptFilesToCache("", files as string[], true);
+                })
+                .catch((err) => {
                     console.error(err);
-                    return;
-                }
-                this.addOscriptFilesToCache("", files, true);
-            });
+                });
             searchPattern =
                 basePath !== ""
                     ? basePath.substr(2) + "**/{modules,модули}/*.os"
                     : "**/{modules,модули}/*.os";
-            glob(searchPattern, globOptions, (err, files) => {
-                if (err) {
+            glob.glob(searchPattern, globOptions)
+                .then((files) => {
+                    this.addOscriptFilesToCache("", files as string[]);
+                })
+                .catch((err) => {
                     console.error(err);
-                    return;
-                }
-                this.addOscriptFilesToCache("", files);
-            });
+                });
         }
 
         if (rootPath) {
@@ -1133,18 +1136,19 @@ export class Global {
     }
 
     private findSubsystems(searchPattern: string, rootPath: string) {
-        const globOptions: glob.IOptions = {};
-        globOptions.dot = true;
-        globOptions.cwd = rootPath;
-        globOptions.nocase = true;
-        globOptions.absolute = true;
-        glob(searchPattern, globOptions, (err, files) => {
-            if (err) {
+        const globOptions: glob.GlobOptions = {
+            dot: true,
+            cwd: rootPath,
+            nocase: true,
+            absolute: true
+        };
+        glob.glob(searchPattern, globOptions)
+            .then((files) => {
+                this.addSubsystemsToCache(files as string[]);
+            })
+            .catch((err) => {
                 console.error(err);
-                return;
-            }
-            this.addSubsystemsToCache(files);
-        });
+            });
     }
 
     private async addSubsystemsToCache(files: string[]) {
