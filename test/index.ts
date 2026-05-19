@@ -56,13 +56,10 @@ function run(testsRoot, clb): any {
     }
 
     // Glob test files
-    glob("**/**.test.js", { cwd: testsRoot }, (error, files): any => {
-        if (error) {
-            return clb(error);
-        }
+    glob.glob("**/**.test.js", { cwd: testsRoot }).then((files): any => {
         try {
             // Fill into Mocha
-            files.forEach((f): Mocha => {
+            (files as string[]).forEach((f): Mocha => {
                 return mocha.addFile(paths.join(testsRoot, f));
             });
             // Run the tests
@@ -78,6 +75,8 @@ function run(testsRoot, clb): any {
         } catch (error) {
             return clb(error);
         }
+    }).catch((error) => {
+        return clb(error);
     });
 }
 exports.run = run;
@@ -113,10 +112,10 @@ class CoverageRunner {
         const sourceRoot = paths.join(self.testsRoot, self.options.relativeSourcePath);
 
         // Glob source files
-        const srcFiles = glob.sync("**/**.js", {
+        const srcFiles = glob.globSync("**/**.js", {
             cwd: sourceRoot,
             ignore: self.options.ignorePatterns,
-        });
+        }) as string[];
 
         // Create a match function - taken from the run-with-cover.js in istanbul.
         const decache = require("decache");

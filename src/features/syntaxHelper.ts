@@ -226,12 +226,15 @@ export default class SyntaxHelperProvider extends AbstractProvider {
 
     private getSubsystems(label) {
         const searchPattern = `Subsystems/${label}/**/Subsystems/*.xml`;
-        const globOptions: glob.IOptions = {};
-        globOptions.dot = true;
-        globOptions.cwd = vscode.workspace.workspaceFolders[0].uri.fsPath;
-        globOptions.nocase = true;
-        globOptions.absolute = true;
-        const files = glob.sync(searchPattern, globOptions);
+        const globOptions: glob.GlobOptions = {
+            dot: true,
+            cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
+            nocase: true,
+            absolute: true
+        };
+        const files = (glob.globSync(searchPattern, globOptions) as string[]).map((f) =>
+            f.replace(/\\/g, "/")
+        );
         const subs = this.addSubsystems(files);
         return subs;
     }
