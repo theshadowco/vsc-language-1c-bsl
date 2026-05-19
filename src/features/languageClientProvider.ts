@@ -115,7 +115,10 @@ export default class LanguageClientProvider {
         const binaryName = this.getBinaryName(languageServerDir);
 
         this.languageClient = await this.createLanguageClient(context, binaryName);
-        this.languageClient.start();
+        // Ждём завершения старта клиента, чтобы initializeResult (и его capabilities)
+        // были доступны к моменту, когда extension.ts начнёт ими пользоваться
+        // (например, в serverHandlesOnTypeFormatting()).
+        await this.languageClient.start();
 
         let terminal = vscode.window.terminals.find(terminal => terminal.name === "BSL Language Server tests");
         if (terminal === undefined) {
@@ -134,9 +137,8 @@ export default class LanguageClientProvider {
                 this.bslLsReady = false;
                 await this.languageClient.stop();
 
-                this.languageClient.start();
+                await this.languageClient.start();
 
-                // await this.languageClient.onReady();
                 this.bslLsReady = true;
             }),
             vscode.commands.registerCommand(RUN_ALL_TESTS_COMMAND, async (args: RunTestArgs) => {

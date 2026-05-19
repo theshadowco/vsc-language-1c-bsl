@@ -139,7 +139,10 @@ export function activate(context: vscode.ExtensionContext) {
 
             // LS запустился: если он НЕ заявил поддержку onTypeFormatting через
             // LSP-capability (старая версия), включаем встроенный regexp-fallback.
-            if (!languageClientProvider.serverHandlesOnTypeFormatting()) {
+            // Регистрируем только если LS вообще активирован — для случая
+            // languageServerEnabled === false fallback уже зарегистрирован выше
+            // в sync-блоке, и двойная регистрация привела бы к двум вызовам провайдера.
+            if (global.languageServerEnabled && !languageClientProvider.serverHandlesOnTypeFormatting()) {
                 context.subscriptions.push(
                     vscode.languages.registerOnTypeFormattingEditProvider(
                         BSL_MODE,
