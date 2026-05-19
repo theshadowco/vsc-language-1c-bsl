@@ -120,6 +120,13 @@ export function activate(context: vscode.ExtensionContext) {
             )
         );
         context.subscriptions.push(
+            vscode.languages.registerOnTypeFormattingEditProvider(
+                BSL_MODE,
+                new DocumentFormattingEditProvider(global),
+                "\n"
+            )
+        );
+        context.subscriptions.push(
             vscode.languages.registerDocumentSymbolProvider(
                 BSL_MODE,
                 new DocumentSymbolProvider(global)
@@ -136,21 +143,6 @@ export function activate(context: vscode.ExtensionContext) {
             versionItem.text = global.languageServerVersion || "Unknown";
             versionItem.severity = vscode.LanguageStatusSeverity.Information;
             context.subscriptions.push(versionItem);
-
-            // LS запустился: если он НЕ заявил поддержку onTypeFormatting через
-            // LSP-capability (старая версия), включаем встроенный regexp-fallback.
-            // Регистрируем только если LS вообще активирован — для случая
-            // languageServerEnabled === false fallback уже зарегистрирован выше
-            // в sync-блоке, и двойная регистрация привела бы к двум вызовам провайдера.
-            if (global.languageServerEnabled && !languageClientProvider.serverHandlesOnTypeFormatting()) {
-                context.subscriptions.push(
-                    vscode.languages.registerOnTypeFormattingEditProvider(
-                        BSL_MODE,
-                        new DocumentFormattingEditProvider(global),
-                        "\n"
-                    )
-                );
-            }
         });
     });
 
@@ -561,21 +553,6 @@ export function activate(context: vscode.ExtensionContext) {
             openSyntaxHelperPanel(syntaxHelper);
         })
     );
-
-    // Встроенный fallback-провайдер регистрируем только тогда, когда мы уверены,
-    // что BSL LS НЕ обрабатывает on-type-форматирование сам (LS отключён в настройках
-    // или старая версия без объявленной capability). Иначе зарегистрированный
-    // провайдер перехватывал бы запрос и возвращал бы пустой список, не давая
-    // VSCode'у дойти до LSP-клиента.
-    if (!global.languageServerEnabled) {
-        context.subscriptions.push(
-            vscode.languages.registerOnTypeFormattingEditProvider(
-                BSL_MODE,
-                new DocumentFormattingEditProvider(global),
-                "\n"
-            )
-        );
-    }
 
     context.subscriptions.push(
         vscode.commands.registerCommand("language-1c-bsl.syntaxHelper", () => {
