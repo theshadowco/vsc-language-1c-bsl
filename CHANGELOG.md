@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.33.2
+
+* Добавлена подсветка синтаксиса для директивы `#stack` (`keyword.control.stack.bsl`)
+
 ## 1.33.1
 
 * Встроенное форматирование при вводе отключается, если BSL Language Server поддерживает onTypeFormatting
