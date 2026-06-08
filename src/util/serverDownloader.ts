@@ -25,7 +25,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 //
-import * as extractZipWithCallback from "extract-zip";
+import extractZipWithCallback = require("extract-zip");
 import * as fs from "fs-extra";
 import { jsonDateParser } from "json-date-parser";
 import * as path from "path";
