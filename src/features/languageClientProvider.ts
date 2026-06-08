@@ -6,6 +6,8 @@ import {
     Executable,
     LanguageClient,
     LanguageClientOptions,
+    Location as LSLocation,
+    Position as LSPosition,
     ServerOptions
 } from "vscode-languageclient/node";
 import * as which from "which";
@@ -20,6 +22,8 @@ const RESTART_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.restart`;
 const RUN_ALL_TESTS_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runAllTests`;
 const RUN_TEST_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.runTest`;
 const DEBUG_TEST_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.debugTest`;
+const GOTO_LOCATIONS_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.gotoLocations`;
+const SHOW_REFERENCES_COMMAND = `${LANGUAGE_1C_BSL_CONFIG}.languageServer.showReferences`;
 
 export default class LanguageClientProvider {
     private bslLsReady = false;
@@ -155,7 +159,37 @@ export default class LanguageClientProvider {
                     vscode.commands.executeCommand("workbench.action.debug.start");
                 }
 
-            })
+            }),
+            // Обёртки навигации для CodeLens-линз BSL Language Server. Встроенные команды
+            // редактора ожидают нативные vscode.Uri/Position/Location, а сервер присылает их
+            // сырым JSON (см. microsoft/vscode-languageserver-node#555), поэтому аргументы
+            // оживляются через protocol2CodeConverter перед вызовом встроенной команды.
+            vscode.commands.registerCommand(
+                GOTO_LOCATIONS_COMMAND,
+                async (uri: string, position: LSPosition, locations: LSLocation[], multiple: string) => {
+                    const converter = this.languageClient.protocol2CodeConverter;
+                    await vscode.commands.executeCommand(
+                        "editor.action.goToLocations",
+                        converter.asUri(uri),
+                        converter.asPosition(position),
+                        locations.map(location => converter.asLocation(location)),
+                        multiple ?? "peek",
+                        "Не найдено объявлений"
+                    );
+                }
+            ),
+            vscode.commands.registerCommand(
+                SHOW_REFERENCES_COMMAND,
+                async (uri: string, position: LSPosition, locations: LSLocation[]) => {
+                    const converter = this.languageClient.protocol2CodeConverter;
+                    await vscode.commands.executeCommand(
+                        "editor.action.showReferences",
+                        converter.asUri(uri),
+                        converter.asPosition(position),
+                        locations.map(location => converter.asLocation(location))
+                    );
+                }
+            )
         );
 
         // await this.languageClient.onReady();
