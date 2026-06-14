@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.34.0
+
+* Добавлены команды навигации CodeLens (`gotoLocations` / `showReferences`)
+* Обновление vscode-languageclient до версии 10
+
 ## 1.33.2
 
 * Добавлена подсветка синтаксиса для директивы `#stack` (`keyword.control.stack.bsl`)
