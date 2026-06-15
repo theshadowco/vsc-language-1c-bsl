@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.35.0
+
+* Добавлена настройка `language-1c-bsl.languageServerJavaOpts` для передачи параметров JVM. Значение добавляется к системной переменной `_JAVA_OPTIONS` и применяется как при запуске BSL Language Server из zip-инсталляции, так и из jar-инсталляции. Настройка заменяет `language-1c-bsl.languageServerExternalJarJavaOpts`
+
 ## 1.34.0
 
 * Добавлены команды навигации CodeLens (`gotoLocations` / `showReferences`)
