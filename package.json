@@ -269,7 +269,7 @@
         "language-1c-bsl.languageServerJavaOpts": {
           "description": "Additional JVM options for BSL Language Server. Specified as a string and appended to the system _JAVA_OPTIONS environment variable. Applied both to zip-installed and external jar BSL Language Server.",
           "type": "string",
-          "default": "-Xmx2g"
+          "default": "-Xmx4g"
         }
       }
     },
