@@ -266,12 +266,10 @@
           "type": "string",
           "default": "java"
         },
-        "language-1c-bsl.languageServerExternalJarJavaOpts": {
-          "description": "Additional java options.",
-          "type": "array",
-          "default": [
-            "-Xmx2g"
-          ]
+        "language-1c-bsl.languageServerJavaOpts": {
+          "description": "Additional JVM options for BSL Language Server. Specified as a string and appended to the system _JAVA_OPTIONS environment variable. Applied both to zip-installed and external jar BSL Language Server.",
+          "type": "string",
+          "default": "-Xmx2g"
         }
       }
     },

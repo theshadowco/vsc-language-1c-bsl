@@ -274,10 +274,7 @@ export default class LanguageClientProvider {
             languageServerPath = `"${languageServerPath}"`;
         }
 
-        const javaOpts: string[] = configuration.get("languageServerExternalJarJavaOpts");
-
         const args: string[] = [];
-        args.push(...javaOpts);
         args.push("-jar", languageServerPath);
 
         const configurationFile = await this.getConfigurationFile(configuration);
@@ -288,7 +285,7 @@ export default class LanguageClientProvider {
         return {
             command,
             args,
-            options: { env: process.env, shell: true }
+            options: { env: this.getEnvWithJavaOpts(configuration), shell: true }
         };
     }
 
@@ -308,8 +305,18 @@ export default class LanguageClientProvider {
         return {
             command,
             args,
-            options: { env: process.env, shell: true }
+            options: { env: this.getEnvWithJavaOpts(configuration), shell: true }
         };
+    }
+
+    private getEnvWithJavaOpts(configuration: vscode.WorkspaceConfiguration): NodeJS.ProcessEnv {
+        const javaOpts = String(configuration.get("languageServerJavaOpts") ?? "").trim();
+        const env = { ...process.env };
+        if (javaOpts) {
+            const existingOpts = env._JAVA_OPTIONS ? `${env._JAVA_OPTIONS} ` : "";
+            env._JAVA_OPTIONS = `${existingOpts}${javaOpts}`;
+        }
+        return env;
     }
 
     private async getConfigurationFile(configuration: vscode.WorkspaceConfiguration): Promise<string | undefined> {
