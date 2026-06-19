@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+* Навигация по определению (`Go to Definition`), поиск ссылок (`Find References`), символы рабочей области (`Ctrl+T`) и подсказки по параметрам теперь обеспечиваются BSL Language Server. Внутренние провайдеры системы контекста плагина для этих возможностей регистрируются только при выключенном BSL Language Server (`language-1c-bsl.languageServerEnabled: false`), что устраняет дублирование результатов
+
 ## 1.35.0
 
 * Добавлена настройка `language-1c-bsl.languageServerJavaOpts` для передачи параметров JVM. Значение добавляется к системной переменной `_JAVA_OPTIONS` и применяется как при запуске BSL Language Server из zip-инсталляции, так и из jar-инсталляции. Настройка заменяет `language-1c-bsl.languageServerExternalJarJavaOpts`

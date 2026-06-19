@@ -85,25 +85,36 @@ export function activate(context: vscode.ExtensionContext) {
             )
         );
         context.subscriptions.push(
-            vscode.languages.registerDefinitionProvider(BSL_MODE, new DefinitionProvider(global))
-        );
-        context.subscriptions.push(
-            vscode.languages.registerReferenceProvider(BSL_MODE, new ReferenceProvider(global))
-        );
-        context.subscriptions.push(
-            vscode.languages.registerWorkspaceSymbolProvider(new WorkspaseSymbolProvider(global))
-        );
-        context.subscriptions.push(
-            vscode.languages.registerSignatureHelpProvider(
-                BSL_MODE,
-                new SignatureHelpProvider(global),
-                "(",
-                ","
-            )
-        );
-        context.subscriptions.push(
             vscode.languages.registerHoverProvider(BSL_MODE, new HoverProvider(global))
         );
+
+        // Навигацию (определение, ссылки, символы рабочей области) и подсказки по
+        // параметрам теперь обеспечивает BSL Language Server. Внутренние провайдеры
+        // регистрируем только когда BSL LS выключен, чтобы не дублировать результаты.
+        if (!global.languageServerEnabled) {
+            context.subscriptions.push(
+                vscode.languages.registerDefinitionProvider(
+                    BSL_MODE,
+                    new DefinitionProvider(global)
+                )
+            );
+            context.subscriptions.push(
+                vscode.languages.registerReferenceProvider(BSL_MODE, new ReferenceProvider(global))
+            );
+            context.subscriptions.push(
+                vscode.languages.registerWorkspaceSymbolProvider(
+                    new WorkspaseSymbolProvider(global)
+                )
+            );
+            context.subscriptions.push(
+                vscode.languages.registerSignatureHelpProvider(
+                    BSL_MODE,
+                    new SignatureHelpProvider(global),
+                    "(",
+                    ","
+                )
+            );
+        }
     }
 
     if (!global.languageServerEnabled) {
