@@ -75,7 +75,11 @@ export function activate(context: vscode.ExtensionContext) {
     global.languageServerEnabled = Boolean(configuration.get("languageServerEnabled"));
     const contextSystemEnabled = Boolean(configuration.get("contextSystemEnabled"));
 
-    if (contextSystemEnabled) {
+    // Автодополнение, ховер, навигацию (определение, ссылки, символы рабочей
+    // области) и подсказки по параметрам теперь обеспечивает BSL Language Server.
+    // Внутренние провайдеры системы контекста плагина регистрируем только когда
+    // BSL LS выключен, чтобы не дублировать результаты.
+    if (contextSystemEnabled && !global.languageServerEnabled) {
         context.subscriptions.push(
             vscode.languages.registerCompletionItemProvider(
                 BSL_MODE,
@@ -83,6 +87,9 @@ export function activate(context: vscode.ExtensionContext) {
                 ".",
                 "="
             )
+        );
+        context.subscriptions.push(
+            vscode.languages.registerHoverProvider(BSL_MODE, new HoverProvider(global))
         );
         context.subscriptions.push(
             vscode.languages.registerDefinitionProvider(BSL_MODE, new DefinitionProvider(global))
@@ -100,9 +107,6 @@ export function activate(context: vscode.ExtensionContext) {
                 "(",
                 ","
             )
-        );
-        context.subscriptions.push(
-            vscode.languages.registerHoverProvider(BSL_MODE, new HoverProvider(global))
         );
     }
 
@@ -237,52 +241,6 @@ export function activate(context: vscode.ExtensionContext) {
             ["(", ")"],
         ],
     });
-
-    if (contextSystemEnabled) {
-        context.subscriptions.push(
-            vscode.workspace.onDidChangeTextDocument(
-                async (textDocumentChangeEvent: vscode.TextDocumentChangeEvent) => {
-                    const editor = vscode.window.activeTextEditor;
-                    if (
-                        !editor ||
-                        editor.document.languageId !== "bsl" ||
-                        textDocumentChangeEvent.contentChanges.length === 0
-                    ) {
-                        return;
-                    }
-
-                    const autoClosingBrackets = Boolean(
-                        vscode.workspace.getConfiguration(
-                            "editor.autoClosingBrackets",
-                            editor.document.uri
-                        )
-                    );
-                    if (textDocumentChangeEvent.contentChanges[0].text.slice(-1) === "(") {
-                        const contentChange = textDocumentChangeEvent.contentChanges[0];
-                        const point = contentChange.range.start.character + contentChange.text.length;
-                        const position = new vscode.Position(editor.selection.active.line, point);
-                        if (autoClosingBrackets) {
-                            editor.edit((editBuilder) => {
-                                editBuilder.insert(
-                                    new vscode.Position(position.line, position.character),
-                                    ")"
-                                );
-                            });
-                        }
-                        vscode.commands.executeCommand("editor.action.triggerParameterHints");
-                        if (vscode.window.activeTextEditor) {
-                            vscode.window.activeTextEditor.selection = new vscode.Selection(
-                                position.line,
-                                position.character,
-                                position.line,
-                                position.character
-                            );
-                        }
-                    }
-                }
-            )
-        );
-    }
 
     const methodDetect = new MethodDetect();
     const controller = new MethodController(methodDetect);

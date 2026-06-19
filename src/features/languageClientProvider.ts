@@ -34,6 +34,9 @@ export default class LanguageClientProvider {
         const languageServerEnabled = Boolean(configuration.get("languageServerEnabled"));
 
         if (!languageServerEnabled) {
+            // Ждать нечего: сервер выключен, считаем его «готовым», чтобы
+            // waitForBSLLSActivation не зависал.
+            this.bslLsReady = true;
             return;
         }
 

@@ -51,12 +51,6 @@ export default class GlobalHoverProvider extends AbstractProvider implements vsc
         }
         let entries;
         if (!entry) {
-
-            // Отключаем ховер методов при включенном BSL LS
-            if (this._global.languageServerEnabled) {
-                return undefined;
-            }
-
             let module = "";
             if (word.indexOf(".") > 0) {
                 const dotArray: string[] = word.split(".");

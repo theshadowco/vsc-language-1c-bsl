@@ -3,7 +3,7 @@
   "displayName": "Language 1C (BSL)",
   "description": "Syntax highlighting for 1C:Enterprise 8.",
   "icon": "images/1c-syntax.png",
-  "version": "1.35.0",
+  "version": "2.0.0",
   "publisher": "1c-syntax",
   "galleryBanner": {
     "color": "#0000FF",
@@ -199,7 +199,7 @@
         "language-1c-bsl.contextSystemEnabled": {
           "description": "Enable Plugin internal context system",
           "type": "boolean",
-          "default": true
+          "default": false
         },
         "language-1c-bsl.languageServerEnabled": {
           "description": "BSL Language Server enabled",
