@@ -1,0 +1,5 @@
+{
+    "language-1c-bsl.contextSystemEnabled": true,
+    "language-1c-bsl.languageServerEnabled": false,
+    "language-1c-bsl.downloadLanguageServer": false
+}
