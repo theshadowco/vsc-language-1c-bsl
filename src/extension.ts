@@ -242,27 +242,6 @@ export function activate(context: vscode.ExtensionContext) {
         ],
     });
 
-    if (contextSystemEnabled) {
-        context.subscriptions.push(
-            vscode.workspace.onDidChangeTextDocument(
-                async (textDocumentChangeEvent: vscode.TextDocumentChangeEvent) => {
-                    const editor = vscode.window.activeTextEditor;
-                    if (
-                        !editor ||
-                        editor.document.languageId !== "bsl" ||
-                        textDocumentChangeEvent.contentChanges.length === 0
-                    ) {
-                        return;
-                    }
-
-                    if (textDocumentChangeEvent.contentChanges[0].text.slice(-1) === "(") {
-                        vscode.commands.executeCommand("editor.action.triggerParameterHints");
-                    }
-                }
-            )
-        );
-    }
-
     const methodDetect = new MethodDetect();
     const controller = new MethodController(methodDetect);
     context.subscriptions.push(controller);
