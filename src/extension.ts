@@ -255,33 +255,8 @@ export function activate(context: vscode.ExtensionContext) {
                         return;
                     }
 
-                    const autoClosingBrackets = Boolean(
-                        vscode.workspace.getConfiguration(
-                            "editor.autoClosingBrackets",
-                            editor.document.uri
-                        )
-                    );
                     if (textDocumentChangeEvent.contentChanges[0].text.slice(-1) === "(") {
-                        const contentChange = textDocumentChangeEvent.contentChanges[0];
-                        const point = contentChange.range.start.character + contentChange.text.length;
-                        const position = new vscode.Position(editor.selection.active.line, point);
-                        if (autoClosingBrackets) {
-                            editor.edit((editBuilder) => {
-                                editBuilder.insert(
-                                    new vscode.Position(position.line, position.character),
-                                    ")"
-                                );
-                            });
-                        }
                         vscode.commands.executeCommand("editor.action.triggerParameterHints");
-                        if (vscode.window.activeTextEditor) {
-                            vscode.window.activeTextEditor.selection = new vscode.Selection(
-                                position.line,
-                                position.character,
-                                position.line,
-                                position.character
-                            );
-                        }
                     }
                 }
             )
