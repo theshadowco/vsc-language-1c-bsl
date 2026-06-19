@@ -199,7 +199,7 @@
         "language-1c-bsl.contextSystemEnabled": {
           "description": "Enable Plugin internal context system",
           "type": "boolean",
-          "default": true
+          "default": false
         },
         "language-1c-bsl.languageServerEnabled": {
           "description": "BSL Language Server enabled",
