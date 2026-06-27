@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Добавлена настройка `language-1c-bsl.languageServerMcpEnabled` (по умолчанию `false`) для запуска BSL Language Server с MCP-сервером (Streamable HTTP) параллельно с LSP. При включении BSL LS запускается с флагом `--mcp`, MCP-эндпоинт доступен по адресу `http://localhost:<port>/mcp`. Порт задаётся отдельно настройкой `language-1c-bsl.languageServerMcpPort` (обязательна при включённом MCP; если пусто — MCP не поднимается, выводится warning, LSP работает штатно). Для исключения конфликтов при нескольких экземплярах VS Code задавайте уникальный порт per workspace. См. [McpMode.md](McpMode.md).
+
 ## 2.0.0
 
 * Настройка `language-1c-bsl.contextSystemEnabled` по умолчанию выключена (`false`) — по умолчанию все языковые возможности обеспечивает BSL Language Server. Внутреннюю систему контекста плагина можно включить вручную (например, при работе с выключенным BSL Language Server)

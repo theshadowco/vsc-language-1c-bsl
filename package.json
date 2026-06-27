@@ -270,6 +270,16 @@
           "description": "Additional JVM options for BSL Language Server. Specified as a string and appended to the system _JAVA_OPTIONS environment variable. Applied both to zip-installed and external jar BSL Language Server.",
           "type": "string",
           "default": "-Xmx4g"
+        },
+        "language-1c-bsl.languageServerMcpEnabled": {
+          "description": "Run BSL Language Server with MCP server (Streamable HTTP) alongside LSP. Requires explicit port (see languageServerMcpPort). When enabled, BSL LS is started with --mcp flag and MCP endpoint becomes available at http://localhost:<port>/mcp.",
+          "type": "boolean",
+          "default": false
+        },
+        "language-1c-bsl.languageServerMcpPort": {
+          "description": "Port for BSL Language Server MCP endpoint (Streamable HTTP). Required when languageServerMcpEnabled is true. If empty when MCP is enabled, a warning is shown and BSL LS starts without MCP. To avoid conflicts across multiple VS Code instances, set a distinct port per workspace.",
+          "type": "string",
+          "default": ""
         }
       }
     },

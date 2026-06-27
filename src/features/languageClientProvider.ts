@@ -285,6 +285,8 @@ export default class LanguageClientProvider {
             args.push("-c", configurationFile);
         }
 
+        args.push(...this.getMcpArgs(configuration));
+
         return {
             command,
             args,
@@ -304,6 +306,8 @@ export default class LanguageClientProvider {
         if (configurationFile) {
             args.push("-c", configurationFile);
         }
+
+        args.push(...this.getMcpArgs(configuration));
 
         return {
             command,
@@ -344,6 +348,23 @@ export default class LanguageClientProvider {
         }
 
         return configurationFile;
+    }
+
+    private getMcpArgs(configuration: vscode.WorkspaceConfiguration): string[] {
+        const mcpEnabled = Boolean(configuration.get("languageServerMcpEnabled"));
+        if (!mcpEnabled) {
+            return [];
+        }
+
+        const port = String(configuration.get("languageServerMcpPort") ?? "").trim();
+        if (!port) {
+            const message = "BSL Language Server: MCP is enabled but port is empty (language-1c-bsl.languageServerMcpPort). MCP will not be started.";
+            console.warn(message);
+            void vscode.window.showWarningMessage(message);
+            return [];
+        }
+
+        return ["--mcp", `--server.port=${port}`];
     }
 
     private getBinaryName(langServerInstallDir: string) {
