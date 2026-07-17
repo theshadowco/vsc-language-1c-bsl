@@ -491,6 +491,9 @@
           },
           "patterns": [
             {
+              "include": "#annotations"
+            },
+            {
               "include": "#basic"
             },
             {
